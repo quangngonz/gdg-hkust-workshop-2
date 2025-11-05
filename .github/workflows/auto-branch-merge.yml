@@ -11,11 +11,12 @@ permissions:
 jobs:
   create-and-merge:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Configure Git
         run: |
@@ -23,20 +24,24 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Create and push branch
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REPO: ${{ github.repository }}
         run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           echo "Creating and syncing branch: $BRANCH_NAME"
           git fetch origin
           git checkout -b "$BRANCH_NAME"
-          git push origin "$BRANCH_NAME"
+          git push "https://x-access-token:${PAT_TOKEN}@github.com/${REPO}" "$BRANCH_NAME"
 
       - name: Merge PR into new branch using GitHub API
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPO: ${{ github.repository }}
         run: |
           echo "Merging PR #$PR_NUMBER into its branch..."
           gh api \
-            repos/$REPO/pulls/$PR_NUMBER/merge \
+            -H "Authorization: token ${PAT_TOKEN}" \
+            repos/${REPO}/pulls/${PR_NUMBER}/merge \
             -f merge_method='squash' || echo "Merge failed or already merged"
