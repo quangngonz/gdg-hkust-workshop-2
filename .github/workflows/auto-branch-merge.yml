@@ -3,7 +3,6 @@ name: Auto Create and Merge PR Branch
 on:
   pull_request:
     types: [opened]
-  workflow_dispatch:
 
 permissions:
   contents: write
