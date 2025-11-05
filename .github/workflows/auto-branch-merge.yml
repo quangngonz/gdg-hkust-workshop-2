@@ -1,0 +1,38 @@
+name: Auto Create and Merge PR Branch
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-and-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main repo
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "github-actions[bot]"
+          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} repo
+          cd repo
+
+          # Create a branch with the same name as the PR branch
+          BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
+          echo "Creating and syncing branch: $BRANCH_NAME"
+          git fetch origin
+          git checkout -b "$BRANCH_NAME"
+          git push origin "$BRANCH_NAME"
+
+      - name: Merge PR into new branch using GitHub API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Merging PR #$PR_NUMBER into its branch..."
+          gh api \
+            repos/$REPO/pulls/$PR_NUMBER/merge \
+            -f merge_method='squash' || echo "Merge failed or already merged"
