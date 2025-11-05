@@ -78,21 +78,14 @@ git push origin <your-itsc-id>-submission
 
 You're almost done!
 
-```bash
-# Go to your forked repository on GitHub
-# You should see a banner prompting you to "Compare & pull request". Click it.
-# Add a title like "Add Jane Doe's Profile".
-# Click the **Create pull request** button.
-```
-
-### Congratulations!
-
-You have successfully completed the workshop. Once your pull request is reviewed and merged, you have officially contributed to the project!
-
 1.  Go to your forked repository on GitHub.
 2.  You should see a banner prompting you to "Compare & pull request". Click it.
 3.  Add a title like "Add Jane Doe's Profile".
 4.  Click the **Create pull request** button.
+
+### Congratulations!
+
+You have successfully completed the workshop. Once your pull request is reviewed and merged, you have officially contributed to the project!
 
 ### Congratulations!
 

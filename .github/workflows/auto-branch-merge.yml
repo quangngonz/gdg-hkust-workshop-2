@@ -12,14 +12,18 @@ jobs:
   create-and-merge:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout main repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "github-actions[bot]"
-          git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} repo
-          cd repo
 
-          # Create a branch with the same name as the PR branch
+      - name: Create and push branch
+        run: |
           BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           echo "Creating and syncing branch: $BRANCH_NAME"
           git fetch origin
